@@ -15,6 +15,7 @@ const TEMPLATE_TOKENS = new Set([
   "aUnit",
   "bUnit",
   "unit",
+  "property",
   "aKind",
   "bKind",
 ]);
@@ -61,6 +62,7 @@ function questionText(itemA, itemB, definition) {
     aUnit: definition.unit,
     bUnit: definition.unit,
     unit: definition.unit,
+    property: definition.label.toLowerCase(),
     aKind: itemA[definition.matchField] ?? "",
     bKind: itemB[definition.matchField] ?? "",
   };

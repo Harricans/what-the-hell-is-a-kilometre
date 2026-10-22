@@ -94,7 +94,17 @@ function renderTable() {
         property: property.id,
         label: `${property.label} source URL for ${item.name}`,
       }));
-      cell.append(valueLabel, sourceLabel);
+      const searchLink = document.createElement("a");
+      const search = new URL("https://www.google.com/search");
+      search.searchParams.set(
+        "q",
+        `${item.name} ${property.label} ${property.unit} official measurement source`,
+      );
+      searchLink.href = search.href;
+      searchLink.target = "_blank";
+      searchLink.rel = "noopener noreferrer";
+      searchLink.textContent = "Find a source";
+      cell.append(valueLabel, sourceLabel, searchLink);
       row.append(cell);
     }
     body.append(row);
@@ -110,6 +120,10 @@ function findItem(id) {
 function markDirty(message = "Unsaved changes. Save this catalog on the device when ready.") {
   dirty = true;
   status.textContent = message;
+}
+
+function bumpCatalogVersion() {
+  catalog.version = `${catalog.version.split("-edit-")[0]}-edit-${Date.now()}`;
 }
 
 function updateInput(input) {
@@ -143,10 +157,13 @@ function updateInput(input) {
       return;
     }
     input.setCustomValidity("");
+    const previousId = input.dataset.itemId;
     item.id = nextId;
-    for (const fieldInput of table.querySelectorAll(`[data-item-id="${CSS.escape(input.dataset.itemId)}"]`)) {
+    for (const fieldInput of table.querySelectorAll(`[data-item-id="${CSS.escape(previousId)}"]`)) {
       fieldInput.dataset.itemId = nextId;
     }
+    const removeButton = table.querySelector(`[data-remove-item="${CSS.escape(previousId)}"]`);
+    if (removeButton) removeButton.dataset.removeItem = nextId;
   } else {
     item[field] = input.value.trim();
   }
@@ -206,13 +223,13 @@ document.getElementById("property-form").addEventListener("submit", (event) => {
   }
   event.currentTarget.reset();
   event.currentTarget.elements.questionTemplate.value =
-    "How many {aPlural} equal one {bName} by this measure?";
+    "How many {aPlural} have the same {property} as one {bName}?";
   renderTable();
   markDirty(`Added column "${definition.label}". Enter its measurements and source links where available.`);
 });
 
 document.getElementById("save-catalog").addEventListener("click", () => {
-  catalog.version = `${catalog.version.split("-edit-")[0]}-edit-${Date.now()}`;
+  bumpCatalogVersion();
   try {
     saveCatalog(catalog);
     dirty = false;
@@ -224,13 +241,17 @@ document.getElementById("save-catalog").addEventListener("click", () => {
 
 document.getElementById("export-catalog").addEventListener("click", () => {
   try {
+    bumpCatalogVersion();
     const validated = parseCatalog(JSON.stringify(catalog));
     const blob = new Blob([`${JSON.stringify(validated, null, 2)}\n`], { type: "application/json" });
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
+    const downloadUrl = URL.createObjectURL(blob);
+    link.href = downloadUrl;
     link.download = "items.json";
+    document.body.append(link);
     link.click();
-    URL.revokeObjectURL(link.href);
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
     status.textContent = "Catalog exported. Replace data/items.json in the repository to publish it for everyone.";
   } catch (error) {
     status.textContent = `Cannot export yet: ${error.message}`;

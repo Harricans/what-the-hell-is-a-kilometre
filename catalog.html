@@ -43,7 +43,7 @@
 
       <section class="panel property-panel" aria-labelledby="property-heading">
         <h2 id="property-heading">Add a variable / column</h2>
-        <p class="muted">A variable should be a positive, ratio-scale numeric quantity in one consistent unit (not a temperature or date). Items can leave it blank. Templates support {aName}, {aPlural}, {bName}, {bPlural}, and {unit}.</p>
+        <p class="muted">A variable should be a positive, ratio-scale numeric quantity in one consistent unit (not a temperature or date). Items can leave it blank. Templates support {aName}, {aPlural}, {bName}, {bPlural}, {unit}, and {property}.</p>
         <form id="property-form" class="property-form">
           <label>Column ID
             <input name="id" required pattern="[a-z][a-z0-9_]*" placeholder="e.g. battery_capacity">
@@ -55,7 +55,7 @@
             <input name="unit" required placeholder="e.g. Wh">
           </label>
           <label class="template-field">Question template
-            <input name="questionTemplate" required value="How many {aPlural} equal one {bName} by this measure?">
+            <input name="questionTemplate" required value="How many {aPlural} have the same {property} as one {bName}?">
           </label>
           <button class="button button-primary" type="submit">Add column</button>
         </form>
