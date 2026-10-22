@@ -37,13 +37,14 @@ test("seeded questions are reproducible and pairs do not repeat", () => {
   const first = createQuestions(items, { count: 5, seed: dailySeed("2026-10-22", "space-starter-v1") });
   const second = createQuestions(items, { count: 5, seed: dailySeed("2026-10-22", "space-starter-v1") });
   assert.deepEqual(first.map((question) => question.id), second.map((question) => question.id));
-  assert.equal(new Set(first.map((question) => question.id)).size, 5);
+  assert.equal(new Set(first.map((question) => question.pairId)).size, 5);
 });
 
 test("daily seed changes with UTC date and data version", () => {
   assert.notEqual(dailySeed("2026-10-22", "v1"), dailySeed("2026-10-23", "v1"));
   assert.notEqual(dailySeed("2026-10-22", "v1"), dailySeed("2026-10-22", "v2"));
   assert.throws(() => dailySeed("not-a-date"), /valid UTC date/);
+  assert.throws(() => dailySeed("2026-02-30"), /valid UTC date/);
 });
 
 test("score is exact for a correct answer and decreases logarithmically", () => {

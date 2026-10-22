@@ -82,7 +82,7 @@ export function validateItems(items) {
 
 function buildEligibleQuestions(items) {
   validateItems(items);
-  const orderedItems = [...items].sort((a, b) => a.id.localeCompare(b.id));
+  const orderedItems = [...items].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   const questions = [];
 
   for (const property of PROPERTY_ORDER) {
@@ -102,6 +102,7 @@ function buildEligibleQuestions(items) {
 
         questions.push({
           id: `${property}:${itemA.id}:${itemB.id}`,
+          pairId: `${itemA.id}:${itemB.id}`,
           itemA,
           itemB,
           property,
@@ -119,22 +120,37 @@ export function createQuestions(items, { count = ROUND_COUNT, seed } = {}) {
     throw new RangeError("Question count must be a positive integer.");
   }
   const pool = buildEligibleQuestions(items);
-  if (pool.length < count) {
-    throw new RangeError(`Not enough eligible question pairs: need ${count}, found ${pool.length}.`);
-  }
-
   const random = seed === undefined ? Math.random : seededRandom(seed);
   for (let index = pool.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(random() * (index + 1));
     [pool[index], pool[swapIndex]] = [pool[swapIndex], pool[index]];
   }
-  return pool.slice(0, count);
+
+  const selected = [];
+  const usedPairs = new Set();
+  for (const question of pool) {
+    if (usedPairs.has(question.pairId)) continue;
+    selected.push(question);
+    usedPairs.add(question.pairId);
+    if (selected.length === count) break;
+  }
+  if (selected.length < count) {
+    throw new RangeError(
+      `Not enough eligible, non-repeating item pairs: need ${count}, found ${selected.length}.`,
+    );
+  }
+  return selected;
 }
 
 export function dailySeed(date = new Date(), dataVersion = "1") {
   const utcDate =
     date instanceof Date ? date.toISOString().slice(0, 10) : String(date);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(utcDate) || Number.isNaN(Date.parse(`${utcDate}T00:00:00Z`))) {
+  const parsedDate = new Date(`${utcDate}T00:00:00Z`);
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(utcDate) ||
+    Number.isNaN(parsedDate.getTime()) ||
+    parsedDate.toISOString().slice(0, 10) !== utcDate
+  ) {
     throw new TypeError("Daily seed date must be a valid UTC date in YYYY-MM-DD format.");
   }
   return `daily:${GAME_VERSION}:${dataVersion}:${utcDate}`;

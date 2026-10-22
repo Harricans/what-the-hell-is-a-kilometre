@@ -12,6 +12,8 @@ A small, playful browser game about estimating real-world quantities. The goal i
 
 ## Implementation plan
 
+The current prototype implements a small space-focused starter set; the broader, 60-item dataset remains future work.
+
 ### 1. Curate and validate the data
 
 - Store items in `data/items.json`. Each item has a stable unique `id`, `name`, `plural`, `emoji`, `category`, optional positive measurements in a `props` object using canonical units (`mass_kg`, `length_m`, `volume_l`), a `length_kind` (`length`, `height`, `diameter`, or `width`), and a short note for a fun fact or caveat.
@@ -42,9 +44,13 @@ A small, playful browser game about estimating real-world quantities. The goal i
 - Verify that each generated question has valid data, matching properties, and correctly worded dimensions. Manually check keyboard operation, focus, contrast, and the complete game flow on mobile and desktop.
 - Document local run and test commands once the app structure is in place. Keep the site static; GitHub Pages is a suitable first deployment, using branch publishing for a site with no build step or a Pages Actions workflow if a build is introduced.
 
+Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies).
+
 ## Research notes and references
 
 There is no single dependable dataset likely to cover household objects, animals, vehicles, landmarks, and space with consistently defined, traceable measurements. A small curated JSON dataset is the best fit: it keeps the game fast and offline, makes item facts reviewable, and avoids an API dependency. Institutional catalogs are useful for specific categories; no catalog should be treated as a substitute for checking each measurement and its definition.
+
+The starter values in `data/items.json` are approximate and include NASA source links per property. External pages could not be fetched in the implementation environment, so treat the dataset as a prototype and verify the cited values and definitions against the source pages before presenting it as fully fact-checked.
 
 - [NIST: SI units](https://www.nist.gov/pml/owm/metric-si/si-units) — reference for consistent units, not a catalog of game objects.
 - [NASA: Planetary Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/) — candidate source for comparable planetary measurements.
