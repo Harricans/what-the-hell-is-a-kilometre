@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { fetchItemImage } from "../src/item-images.js";
 import {
   createQuestions,
   dailySeed,
@@ -137,4 +138,43 @@ test("catalog JSON can be validated for import/export and rejects unknown column
   invalid.items[0].props.unregistered_measure = 3;
   invalid.items[0].sources.unregistered_measure = "https://example.org";
   assert.throws(() => validateCatalog(invalid), /invalid unregistered_measure/);
+});
+
+test("item image lookup returns Wikimedia image and article attribution", async () => {
+  const image = await fetchItemImage(
+    { name: "Paper clip" },
+    async (url, options) => {
+      assert.match(url, /Paper%20clip$/);
+      assert.equal(options.headers.accept, "application/json");
+      return {
+        ok: true,
+        json: async () => ({
+          thumbnail: { source: "https://upload.wikimedia.org/example.jpg" },
+          content_urls: { desktop: { page: "https://en.wikipedia.org/wiki/Paper_clip" } },
+        }),
+      };
+    },
+  );
+  assert.deepEqual(image, {
+    src: "https://upload.wikimedia.org/example.jpg",
+    pageUrl: "https://en.wikipedia.org/wiki/Paper_clip",
+    alt: "Paper clip",
+  });
+});
+
+test("item image lookup rejects unknown hosts and missing images", async () => {
+  const wrongHost = await fetchItemImage({ name: "Item" }, async () => ({
+    ok: true,
+    json: async () => ({
+      thumbnail: { source: "https://example.org/image.jpg" },
+      content_urls: { desktop: { page: "https://en.wikipedia.org/wiki/Item" } },
+    }),
+  }));
+  assert.equal(wrongHost, null);
+
+  const missing = await fetchItemImage({ name: "Item" }, async () => ({
+    ok: true,
+    json: async () => ({ content_urls: { desktop: { page: "https://en.wikipedia.org/wiki/Item" } } }),
+  }));
+  assert.equal(missing, null);
 });

@@ -7,6 +7,7 @@ import {
   ROUND_COUNT,
   scoreGuess,
 } from "./questions.js";
+import { fetchItemImage } from "./item-images.js";
 
 const elements = Object.fromEntries(
   [
@@ -45,6 +46,7 @@ const elements = Object.fromEntries(
 
 let data;
 let state;
+const imageCache = new Map();
 
 function todayUtc() {
   return new Date().toISOString().slice(0, 10);
@@ -58,8 +60,8 @@ function formatAnswer(question) {
   return `${formatNumber(question.answer)} ${question.itemA.plural}`;
 }
 
-function propertyLabel(property) {
-  return property.label;
+function propertyLabel(question) {
+  return `${question.label} (${question.unit})`;
 }
 
 function sliderValue(guess) {
@@ -82,13 +84,68 @@ function currentQuestion() {
   return state.questions[state.round];
 }
 
+function getItemImage(item) {
+  if (!imageCache.has(item.id)) {
+    imageCache.set(item.id, fetchItemImage(item).catch(() => null));
+  }
+  return imageCache.get(item.id);
+}
+
+function createItemCard(item) {
+  const figure = document.createElement("figure");
+  figure.className = "item-card";
+  const imageArea = document.createElement("div");
+  imageArea.className = "item-image-area";
+  imageArea.setAttribute("aria-busy", "true");
+  const placeholder = document.createElement("span");
+  placeholder.className = "image-placeholder";
+  placeholder.textContent = "Finding an image…";
+  imageArea.append(placeholder);
+
+  const caption = document.createElement("figcaption");
+  caption.textContent = item.name;
+  figure.append(imageArea, caption);
+
+  getItemImage(item).then((image) => {
+    if (!figure.isConnected) return;
+    imageArea.removeAttribute("aria-busy");
+    if (!image) {
+      placeholder.textContent = "Image unavailable";
+      return;
+    }
+    const element = document.createElement("img");
+    element.src = image.src;
+    element.alt = image.alt;
+    element.loading = "eager";
+    element.decoding = "async";
+    element.referrerPolicy = "no-referrer";
+    element.addEventListener("error", () => {
+      element.remove();
+      placeholder.textContent = "Image unavailable";
+    }, { once: true });
+    imageArea.replaceChildren(element);
+
+    const attribution = document.createElement("a");
+    attribution.href = image.pageUrl;
+    attribution.target = "_blank";
+    attribution.rel = "noopener noreferrer";
+    attribution.className = "image-attribution";
+    attribution.textContent = "Image source";
+    figure.append(attribution);
+  });
+  return figure;
+}
+
 function renderQuestion() {
   const question = currentQuestion();
   elements["mode-label"].textContent =
     state.mode === "daily" ? `Daily · ${state.date}` : "Random game";
   elements["round-label"].textContent = `Round ${state.round + 1} of ${ROUND_COUNT}`;
   elements.progress.style.width = `${((state.round + 1) / ROUND_COUNT) * 100}%`;
-  elements["item-pair"].textContent = `${question.itemA.emoji} ${question.itemA.name} · ${question.itemB.emoji} ${question.itemB.name}`;
+  elements["item-pair"].replaceChildren(
+    createItemCard(question.itemA),
+    createItemCard(question.itemB),
+  );
   elements.question.textContent = question.text;
   elements["unit-label"].textContent = propertyLabel(question);
   elements["guess-error"].textContent = "";

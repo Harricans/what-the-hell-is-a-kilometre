@@ -1,6 +1,6 @@
 # What the Hell Is a Kilometre?
 
-A small, playful browser game about estimating real-world quantities. The goal is a fast, shareable game that works on phones and does not depend on a server or third-party runtime services.
+A small, playful browser game about estimating real-world quantities. The game is static and has no app server, but it requests item thumbnails from Wikipedia and Wikimedia Commons while playing.
 
 ## Game
 
@@ -21,15 +21,15 @@ The prototype currently includes 60 items across everyday objects, food, animals
 ├── index.html          # GitHub Pages entry point (kept at repository root)
 ├── assets/styles.css   # Game styles
 ├── data/items.json     # Property definitions and item catalogue
-├── src/                # Browser game and question engine
+├── src/                # Browser game, item-image lookup, and question engine
 └── test/               # Node.js unit tests
 ```
 
 ### 1. Curate and validate the data
 
-- `data/items.json` contains both a `properties` registry and an `items` array. Each item has stable identifying/display fields plus optional positive numeric values in `props`; `sources` stores the URL for each populated property. An item does not need every variable.
+- `data/items.json` contains both a `properties` registry and an `items` array. Each item has stable identifying/display fields plus optional positive numeric values in `props`; `sources` stores the URL for each populated property. An item does not need every variable. Optional `image_page` can identify its Wikipedia article when its display name is ambiguous.
 - Each property definition declares its stable `id`, label, consistent unit, and question template. The engine loops through the registry, so a new column does not require a generator-code change. Optional `matchField`/`matchValues` metadata can restrict comparisons to items with matching measurement kinds. Templates support `{aName}`, `{aPlural}`, `{bName}`, `{bPlural}`, `{unit}`, `{property}`, `{aUnit}`, and `{bUnit}`; the built-in length definition also selects a template by `length_kind`.
-- Measurements must be positive, ratio-scale quantities with consistent units for a given property. Temperature in Celsius, dates, ordinal values, and mixed units are not meaningful for the ratio-based score. Keep a source URL beside each value; the editor does not automatically search or verify sources.
+- Measurements must be positive, ratio-scale quantities with consistent units for a given property. Temperature in Celsius, dates, ordinal values, and mixed units are not meaningful for the ratio-based score. Keep a source URL beside each value; source links are curated with repository data.
 - Keep a source URL with each measured property (or an equivalently clear per-property source record). A source must support the quantity and definition used, not just describe the item generally.
 - Keep at least 60 items across everyday objects and food, animals, vehicles, landmarks, and space. Expand categories with well-sourced examples, and verify current approximate values before treating them as approved data.
 - Prefer primary institutional references for facts. Use Wikidata to discover candidates and references, not as automatic verification. Normalize values once to the units above, preserve measurement meaning (for example, height versus diameter), and record ambiguity in the note.
@@ -48,7 +48,7 @@ The prototype currently includes 60 items across everyday objects, food, animals
 
 - Keep question generation and scoring independent of the DOM so they can be tested without a browser.
 - Implement the slider on a base-10 logarithmic scale and keep it synchronized with the typed-number input.
-- Build the five-round flow, answer reveal, total score, and spoiler-free share text. Keep external APIs and runtime dependencies out of the game.
+- Build the five-round flow, answer reveal, total score, and spoiler-free share text. Item photos are resolved through Wikipedia's page-summary API and served from Wikimedia Commons; attribution links open the corresponding Wikipedia article. If no suitable image is available, the game displays a text placeholder. This is the game's only runtime API request.
 - Support narrow screens and dark mode, with clear labels, visible keyboard focus, adequate contrast, and comfortably sized controls.
 
 ### 4. Test, check, and publish
@@ -63,7 +63,7 @@ The site has no public catalog editor or browser-side catalog persistence. The g
 
 ## Research notes and references
 
-There is no single dependable dataset likely to cover household objects, animals, vehicles, landmarks, and space with consistently defined, traceable measurements. A small curated JSON dataset is the best fit: it keeps the game fast and offline, makes item facts reviewable, and avoids an API dependency. Institutional catalogs are useful for specific categories; no catalog should be treated as a substitute for checking each measurement and its definition.
+There is no single dependable dataset likely to cover household objects, animals, vehicles, landmarks, and space with consistently defined, traceable measurements. A small curated JSON dataset is the best fit for item facts and measurements. Image thumbnails are fetched on demand from Wikipedia/Wikimedia; this sends the displayed item name to Wikipedia, requires an internet connection for images, and may not return a photo for every entry.
 
 Values in `data/items.json` are approximate and have source links for each populated measurement. The links include institutional references and item-specific reference pages, but external pages could not be fetched during this implementation. Verify each linked value and definition before presenting the catalogue as fact-checked; in particular, treat household and food sizes as representative rather than universal.
 
