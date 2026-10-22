@@ -1,0 +1,145 @@
+{
+  "version": "space-starter-v1",
+  "items": [
+    {
+      "id": "moon",
+      "name": "Moon",
+      "plural": "Moons",
+      "emoji": "🌕",
+      "category": "space",
+      "props": { "mass_kg": 7.35e22, "length_m": 3475000 },
+      "length_kind": "diameter",
+      "note": "Approximate mean diameter; the Moon is not a perfect sphere.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html"
+      }
+    },
+    {
+      "id": "mercury",
+      "name": "Mercury",
+      "plural": "Mercuries",
+      "emoji": "☿️",
+      "category": "space",
+      "props": { "mass_kg": 3.301e23, "length_m": 4879000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter, converted from the NASA fact sheet's kilometre value.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "mars",
+      "name": "Mars",
+      "plural": "Marses",
+      "emoji": "🔴",
+      "category": "space",
+      "props": { "mass_kg": 6.417e23, "length_m": 6792000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter, converted from the NASA fact sheet's kilometre value.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "venus",
+      "name": "Venus",
+      "plural": "Venuses",
+      "emoji": "🟡",
+      "category": "space",
+      "props": { "mass_kg": 4.867e24, "length_m": 12104000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter, converted from the NASA fact sheet's kilometre value.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "earth",
+      "name": "Earth",
+      "plural": "Earths",
+      "emoji": "🌎",
+      "category": "space",
+      "props": { "mass_kg": 5.972e24, "length_m": 12742000 },
+      "length_kind": "diameter",
+      "note": "Equatorial diameter; Earth is slightly wider at the equator than pole to pole.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "neptune",
+      "name": "Neptune",
+      "plural": "Neptunes",
+      "emoji": "🔵",
+      "category": "space",
+      "props": { "mass_kg": 1.024e26, "length_m": 49528000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter, converted from the NASA fact sheet's kilometre value.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "uranus",
+      "name": "Uranus",
+      "plural": "Uranuses",
+      "emoji": "🪐",
+      "category": "space",
+      "props": { "mass_kg": 8.681e25, "length_m": 51118000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter, converted from the NASA fact sheet's kilometre value.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn",
+      "plural": "Saturns",
+      "emoji": "🪐",
+      "category": "space",
+      "props": { "mass_kg": 5.683e26, "length_m": 120536000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter; this excludes the much wider ring system.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "plural": "Jupiters",
+      "emoji": "🟠",
+      "category": "space",
+      "props": { "mass_kg": 1.898e27, "length_m": 142984000 },
+      "length_kind": "diameter",
+      "note": "Mean diameter, converted from the NASA fact sheet's kilometre value.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html"
+      }
+    },
+    {
+      "id": "sun",
+      "name": "Sun",
+      "plural": "Suns",
+      "emoji": "☀️",
+      "category": "space",
+      "props": { "mass_kg": 1.989e30, "length_m": 1392700000 },
+      "length_kind": "diameter",
+      "note": "Approximate diameter; values vary slightly by source and definition.",
+      "sources": {
+        "mass_kg": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html",
+        "length_m": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html"
+      }
+    }
+  ]
+}
