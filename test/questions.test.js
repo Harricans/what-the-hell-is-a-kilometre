@@ -8,17 +8,18 @@ import {
   MIN_RATIO,
   scoreGuess,
   validateItems,
-} from "./questions.js";
+} from "../src/questions.js";
 
 const dataUrl = new URL("../data/items.json", import.meta.url);
 const { items } = JSON.parse(await readFile(dataUrl, "utf8"));
 
-test("starter data has enough valid, sourced entries for a game", () => {
+test("expanded data has 60 sourced entries across multiple categories", () => {
   assert.equal(validateItems(items), items);
-  assert.ok(items.length >= 10);
+  assert.ok(items.length >= 60);
+  assert.ok(new Set(items.map((item) => item.category)).size >= 5);
   for (const item of items) {
     for (const property of Object.keys(item.props)) {
-      assert.match(item.sources[property], /^https:\/\/nssdc\.gsfc\.nasa\.gov\//);
+      assert.match(item.sources[property], /^https:\/\//);
     }
   }
   assert.equal(createQuestions(items).length, 5);
@@ -30,7 +31,10 @@ test("questions use valid ratios and comparable dimensions", () => {
     assert.ok(answer >= MIN_RATIO && answer <= MAX_RATIO);
     if (property === "length_m") {
       assert.equal(itemA.length_kind, itemB.length_kind);
-      assert.match(text, /diameter/);
+      if (itemA.length_kind === "diameter") assert.match(text, /diameter/);
+      if (itemA.length_kind === "height") assert.match(text, /height/);
+      if (itemA.length_kind === "width") assert.match(text, /width/);
+      if (itemA.length_kind === "length") assert.match(text, /length|end to end/);
     }
   }
 });

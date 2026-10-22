@@ -12,13 +12,24 @@ A small, playful browser game about estimating real-world quantities. The goal i
 
 ## Implementation plan
 
-The current prototype implements a small space-focused starter set; the broader, 60-item dataset remains future work.
+The prototype currently includes 60 items across everyday objects, food, animals, vehicles, landmarks, and space. The data is a first pass; validate its individual measurements and source links before treating it as fact-checked.
+
+## Repository layout
+
+```text
+.
+├── index.html          # GitHub Pages entry point (kept at repository root)
+├── assets/styles.css   # Static styles
+├── data/items.json     # Data-driven item catalogue
+├── src/                # Browser game and question engine
+└── test/               # Node.js unit tests
+```
 
 ### 1. Curate and validate the data
 
-- Store items in `data/items.json`. Each item has a stable unique `id`, `name`, `plural`, `emoji`, `category`, optional positive measurements in a `props` object using canonical units (`mass_kg`, `length_m`, `volume_l`), a `length_kind` (`length`, `height`, `diameter`, or `width`), and a short note for a fun fact or caveat.
+- Store items in `data/items.json`. Each item has a stable unique `id`, `name`, `plural`, `emoji`, `category`, optional positive measurements in a `props` object using canonical units (`mass_kg`, `length_m`, `volume_l`), a `length_kind` (`length`, `height`, `diameter`, or `width`), a short note, and a source URL for every populated property.
 - Keep a source URL with each measured property (or an equivalently clear per-property source record). A source must support the quantity and definition used, not just describe the item generally.
-- Start with a small, well-sourced set, then grow to at least 60 items across everyday objects and food, animals, vehicles, landmarks, and space. Treat the old example values as leads to verify, not as approved game data.
+- Keep at least 60 items across everyday objects and food, animals, vehicles, landmarks, and space. Expand categories with well-sourced examples, and verify current approximate values before treating them as approved data.
 - Prefer primary institutional references for facts. Use Wikidata to discover candidates and references, not as automatic verification. Normalize values once to the units above, preserve measurement meaning (for example, height versus diameter), and record ambiguity in the note.
 - Validate the JSON before it reaches the game: unique IDs, valid fields, finite positive values, and a usable source for each populated measurement. A schema can check record shape; tests should also check cross-record constraints such as unique IDs.
 
@@ -44,13 +55,13 @@ The current prototype implements a small space-focused starter set; the broader,
 - Verify that each generated question has valid data, matching properties, and correctly worded dimensions. Manually check keyboard operation, focus, contrast, and the complete game flow on mobile and desktop.
 - Document local run and test commands once the app structure is in place. Keep the site static; GitHub Pages is a suitable first deployment, using branch publishing for a site with no build step or a Pages Actions workflow if a build is introduced.
 
-Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies).
+Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies). Keep `index.html` at the root because GitHub Pages is configured to publish the branch root.
 
 ## Research notes and references
 
 There is no single dependable dataset likely to cover household objects, animals, vehicles, landmarks, and space with consistently defined, traceable measurements. A small curated JSON dataset is the best fit: it keeps the game fast and offline, makes item facts reviewable, and avoids an API dependency. Institutional catalogs are useful for specific categories; no catalog should be treated as a substitute for checking each measurement and its definition.
 
-The starter values in `data/items.json` are approximate and include NASA source links per property. External pages could not be fetched in the implementation environment, so treat the dataset as a prototype and verify the cited values and definitions against the source pages before presenting it as fully fact-checked.
+Values in `data/items.json` are approximate and have source links for each populated measurement. The links include institutional references and item-specific reference pages, but external pages could not be fetched during this implementation. Verify each linked value and definition before presenting the catalogue as fact-checked; in particular, treat household and food sizes as representative rather than universal.
 
 - [NIST: SI units](https://www.nist.gov/pml/owm/metric-si/si-units) — reference for consistent units, not a catalog of game objects.
 - [NASA: Planetary Fact Sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/) — candidate source for comparable planetary measurements.
