@@ -19,10 +19,9 @@ The prototype currently includes 60 items across everyday objects, food, animals
 ```text
 .
 ├── index.html          # GitHub Pages entry point (kept at repository root)
-├── assets/             # Game and catalog editor styles
-├── catalog.html        # Spreadsheet-style catalog editor
+├── assets/styles.css   # Game styles
 ├── data/items.json     # Property definitions and item catalogue
-├── src/                # Browser game, catalog storage, editor, and engine
+├── src/                # Browser game and question engine
 └── test/               # Node.js unit tests
 ```
 
@@ -58,9 +57,9 @@ The prototype currently includes 60 items across everyday objects, food, animals
 - Verify that each generated question has valid data, matching properties, and correctly worded dimensions. Manually check keyboard operation, focus, contrast, and the complete game flow on mobile and desktop.
 - Document local run and test commands once the app structure is in place. Keep the site static; GitHub Pages is a suitable first deployment, using branch publishing for a site with no build step or a Pages Actions workflow if a build is introduced.
 
-Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Open `http://localhost:8000/catalog.html` to manage items and variables in a spreadsheet-like table. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies). Keep `index.html` at the root because GitHub Pages is configured to publish the branch root.
+Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies). Keep `index.html` at the root because GitHub Pages is configured to publish the branch root.
 
-The editor validates and saves catalog changes in browser storage, shared by the editor and game on that device. Each item/property cell has a source URL field and a **Find a source** search link; review search results and paste an authoritative source URL yourself. Use **Export catalog JSON** to download the full catalog; replace `data/items.json` with that file and commit/deploy the change to publish the new content to all players. Import accepts the same complete JSON format. The browser-only editor has no shared database and does not automatically verify source pages.
+The site has no public catalog editor or browser-side catalog persistence. The game reads the published `data/items.json`; update this file through the repository's controlled change process now, or connect an authenticated backend/database if shared administration is added later.
 
 ## Research notes and references
 

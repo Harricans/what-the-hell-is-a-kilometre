@@ -7,7 +7,6 @@ import {
   ROUND_COUNT,
   scoreGuess,
 } from "./questions.js";
-import { loadCatalog } from "./catalog-store.js";
 
 const elements = Object.fromEntries(
   [
@@ -212,7 +211,9 @@ elements["again-button"].addEventListener("click", () => {
 elements["daily-date"].textContent = `Today's date is ${todayUtc()} (UTC).`;
 
 try {
-  data = await loadCatalog();
+  const response = await fetch("./data/items.json");
+  if (!response.ok) throw new Error("Could not load the game data.");
+  data = await response.json();
   createQuestions(data.items, {
     count: ROUND_COUNT,
     seed: dailySeed(todayUtc(), `${data.version}:${GAME_VERSION}`),

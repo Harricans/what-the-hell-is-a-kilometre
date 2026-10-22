@@ -10,12 +10,6 @@ import {
   validateCatalog,
   validateItems,
 } from "../src/questions.js";
-import {
-  CATALOG_STORAGE_KEY,
-  loadCatalog,
-  parseCatalog,
-  saveCatalog,
-} from "../src/catalog-store.js";
 
 const dataUrl = new URL("../data/items.json", import.meta.url);
 const catalog = JSON.parse(await readFile(dataUrl, "utf8"));
@@ -138,28 +132,9 @@ test("new registered properties work when only some items have the measurement",
 });
 
 test("catalog JSON can be validated for import/export and rejects unknown columns", () => {
-  assert.deepEqual(parseCatalog(JSON.stringify(catalog)), catalog);
+  assert.deepEqual(validateCatalog(JSON.parse(JSON.stringify(catalog))), catalog);
   const invalid = structuredClone(catalog);
   invalid.items[0].props.unregistered_measure = 3;
   invalid.items[0].sources.unregistered_measure = "https://example.org";
   assert.throws(() => validateCatalog(invalid), /invalid unregistered_measure/);
-});
-
-test("saved catalogs can be reloaded from browser storage", async () => {
-  const values = new Map();
-  const storage = {
-    getItem: (key) => values.get(key) ?? null,
-    setItem: (key, value) => values.set(key, value),
-  };
-  saveCatalog(catalog, storage);
-  assert.equal(values.has(CATALOG_STORAGE_KEY), true);
-  assert.deepEqual(
-    await loadCatalog({
-      storage,
-      fetcher: async () => {
-        throw new Error("Expected the saved catalog to be used.");
-      },
-    }),
-    catalog,
-  );
 });
