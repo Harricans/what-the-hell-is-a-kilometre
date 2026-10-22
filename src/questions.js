@@ -47,15 +47,15 @@ function questionText(itemA, itemB, property) {
 
   const dimension = itemA.length_kind;
   if (dimension === "diameter") {
-    return `How many ${itemA.plural} diameters fit across one ${itemB.name}'s diameter?`;
+    return `How many ${itemA.name} diameters fit across ${itemB.name}'s diameter?`;
   }
   if (dimension === "height") {
-    return `How many ${itemA.plural} heights stack up to one ${itemB.name}'s height?`;
+    return `How many ${itemA.name} heights equal ${itemB.name}'s height?`;
   }
   if (dimension === "width") {
-    return `How many ${itemA.plural} widths fit across one ${itemB.name}'s width?`;
+    return `How many ${itemA.name} widths fit across ${itemB.name}'s width?`;
   }
-  return `How many ${itemA.plural} laid end to end match one ${itemB.name}'s length?`;
+  return `How many ${itemA.plural} laid end to end match ${itemB.name}'s length?`;
 }
 
 export function validateItems(items) {
@@ -68,12 +68,33 @@ export function validateItems(items) {
       throw new TypeError("Every item must have a unique, non-empty id.");
     }
     ids.add(item.id);
-    if (!item.name || !item.plural || !item.category || !item.props) {
+    if (
+      !item.name ||
+      !item.plural ||
+      !item.emoji ||
+      !item.category ||
+      typeof item.note !== "string" ||
+      !item.props ||
+      typeof item.props !== "object" ||
+      Array.isArray(item.props)
+    ) {
       throw new TypeError(`Item "${item.id}" is missing required fields.`);
+    }
+    if ("length_m" in item.props && !["length", "height", "diameter", "width"].includes(item.length_kind)) {
+      throw new TypeError(`Item "${item.id}" has an invalid length_kind.`);
     }
     for (const [property, value] of Object.entries(item.props)) {
       if (!PROPERTY_ORDER.includes(property) || !Number.isFinite(value) || value <= 0) {
         throw new TypeError(`Item "${item.id}" has an invalid ${property} measurement.`);
+      }
+      let source;
+      try {
+        source = new URL(item.sources?.[property]);
+      } catch {
+        throw new TypeError(`Item "${item.id}" is missing a valid source for ${property}.`);
+      }
+      if (source.protocol !== "https:") {
+        throw new TypeError(`Item "${item.id}" source for ${property} must use HTTPS.`);
       }
     }
   }

@@ -25,10 +25,12 @@ test("starter data has enough valid, sourced entries for a game", () => {
 });
 
 test("questions use valid ratios and comparable dimensions", () => {
-  for (const { itemA, itemB, property, answer } of createQuestions(items, { count: 20, seed: "bounds" })) {
+  const questions = createQuestions(items, { count: 20, seed: "bounds" });
+  for (const { itemA, itemB, property, answer, text } of questions) {
     assert.ok(answer >= MIN_RATIO && answer <= MAX_RATIO);
     if (property === "length_m") {
       assert.equal(itemA.length_kind, itemB.length_kind);
+      assert.match(text, /diameter/);
     }
   }
 });
@@ -57,6 +59,12 @@ test("score is exact for a correct answer and decreases logarithmically", () => 
 test("malformed input and insufficient eligible pairs fail clearly", () => {
   assert.throws(() => validateItems([{ id: "x", name: "x", plural: "xs", category: "x", props: { mass_kg: 0 } }]), /at least two items/);
   assert.throws(() => validateItems([items[0], items[0]]), /unique/);
+  const missingSource = structuredClone(items.slice(0, 2));
+  delete missingSource[0].sources.mass_kg;
+  assert.throws(() => validateItems(missingSource), /valid source/);
+  const insecureSource = structuredClone(items.slice(0, 2));
+  insecureSource[0].sources.mass_kg = "http://example.com/source";
+  assert.throws(() => validateItems(insecureSource), /HTTPS/);
   const sameValueItems = [
     { ...items[0], id: "a", props: { mass_kg: 1 } },
     { ...items[1], id: "b", props: { mass_kg: 1 } },

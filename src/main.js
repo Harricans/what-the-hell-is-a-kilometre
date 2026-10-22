@@ -55,6 +55,9 @@ function formatNumber(value) {
 }
 
 function formatAnswer(question) {
+  if (question.property === "length_m" && question.itemA.length_kind !== "length") {
+    return `${formatNumber(question.answer)} ${question.itemA.name} ${question.itemA.length_kind}s`;
+  }
   return `${formatNumber(question.answer)} ${question.itemA.plural}`;
 }
 

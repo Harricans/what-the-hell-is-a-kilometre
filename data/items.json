@@ -18,7 +18,7 @@
     {
       "id": "mercury",
       "name": "Mercury",
-      "plural": "Mercuries",
+      "plural": "Mercury-sized planets",
       "emoji": "☿️",
       "category": "space",
       "props": { "mass_kg": 3.301e23, "length_m": 4879000 },
@@ -32,7 +32,7 @@
     {
       "id": "mars",
       "name": "Mars",
-      "plural": "Marses",
+      "plural": "Mars-sized planets",
       "emoji": "🔴",
       "category": "space",
       "props": { "mass_kg": 6.417e23, "length_m": 6792000 },
@@ -46,7 +46,7 @@
     {
       "id": "venus",
       "name": "Venus",
-      "plural": "Venuses",
+      "plural": "Venus-sized planets",
       "emoji": "🟡",
       "category": "space",
       "props": { "mass_kg": 4.867e24, "length_m": 12104000 },
@@ -74,7 +74,7 @@
     {
       "id": "neptune",
       "name": "Neptune",
-      "plural": "Neptunes",
+      "plural": "Neptune-sized planets",
       "emoji": "🔵",
       "category": "space",
       "props": { "mass_kg": 1.024e26, "length_m": 49528000 },
@@ -88,7 +88,7 @@
     {
       "id": "uranus",
       "name": "Uranus",
-      "plural": "Uranuses",
+      "plural": "Uranus-sized planets",
       "emoji": "🪐",
       "category": "space",
       "props": { "mass_kg": 8.681e25, "length_m": 51118000 },
