@@ -1,5 +1,32 @@
 {
   "version": "multi-category-v1",
+  "properties": [
+    {
+      "id": "mass_kg",
+      "label": "Mass",
+      "unit": "kg",
+      "questionTemplate": "How many {aPlural} weigh the same as one {bName}?"
+    },
+    {
+      "id": "length_m",
+      "label": "Length",
+      "unit": "m",
+      "matchField": "length_kind",
+      "matchValues": ["length", "height", "diameter", "width"],
+      "questionTemplates": {
+        "length": "How many {aPlural} laid end to end match {bName}'s length?",
+        "height": "How many {aName} heights equal {bName}'s height?",
+        "diameter": "How many {aName} diameters fit across {bName}'s diameter?",
+        "width": "How many {aName} widths fit across {bName}'s width?"
+      }
+    },
+    {
+      "id": "volume_l",
+      "label": "Volume",
+      "unit": "l",
+      "questionTemplate": "How many {aPlural} fill the same space as one {bName}?"
+    }
+  ],
   "items": [
     {
       "id": "moon",

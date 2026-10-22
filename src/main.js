@@ -7,6 +7,7 @@ import {
   ROUND_COUNT,
   scoreGuess,
 } from "./questions.js";
+import { loadCatalog } from "./catalog-store.js";
 
 const elements = Object.fromEntries(
   [
@@ -55,14 +56,11 @@ function formatNumber(value) {
 }
 
 function formatAnswer(question) {
-  if (question.property === "length_m" && question.itemA.length_kind !== "length") {
-    return `${formatNumber(question.answer)} ${question.itemA.name} ${question.itemA.length_kind}s`;
-  }
   return `${formatNumber(question.answer)} ${question.itemA.plural}`;
 }
 
 function propertyLabel(property) {
-  return property === "mass_kg" ? "by mass" : property === "volume_l" ? "by volume" : "by length";
+  return property.label;
 }
 
 function sliderValue(guess) {
@@ -93,7 +91,7 @@ function renderQuestion() {
   elements.progress.style.width = `${((state.round + 1) / ROUND_COUNT) * 100}%`;
   elements["item-pair"].textContent = `${question.itemA.emoji} ${question.itemA.name} · ${question.itemB.emoji} ${question.itemB.name}`;
   elements.question.textContent = question.text;
-  elements["unit-label"].textContent = propertyLabel(question.property);
+  elements["unit-label"].textContent = propertyLabel(question);
   elements["guess-error"].textContent = "";
   elements["answer-panel"].hidden = true;
   elements["submit-button"].hidden = false;
@@ -106,7 +104,7 @@ function startGame(mode) {
   state = {
     mode,
     date,
-    questions: createQuestions(data.items, { count: ROUND_COUNT, seed }),
+    questions: createQuestions(data.items, { count: ROUND_COUNT, seed, properties: data.properties }),
     round: 0,
     scores: [],
   };
@@ -214,11 +212,12 @@ elements["again-button"].addEventListener("click", () => {
 elements["daily-date"].textContent = `Today's date is ${todayUtc()} (UTC).`;
 
 try {
-  const response = await fetch("./data/items.json");
-  if (!response.ok) throw new Error("Could not load the game data.");
-  data = await response.json();
-  if (!data.version || !Array.isArray(data.items)) throw new Error("The game data has an invalid format.");
-  createQuestions(data.items, { count: ROUND_COUNT, seed: dailySeed(todayUtc(), `${data.version}:${GAME_VERSION}`) });
+  data = await loadCatalog();
+  createQuestions(data.items, {
+    count: ROUND_COUNT,
+    seed: dailySeed(todayUtc(), `${data.version}:${GAME_VERSION}`),
+    properties: data.properties,
+  });
   elements["daily-button"].disabled = false;
   elements["random-button"].disabled = false;
 } catch (error) {

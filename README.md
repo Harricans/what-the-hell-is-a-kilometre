@@ -19,15 +19,18 @@ The prototype currently includes 60 items across everyday objects, food, animals
 ```text
 .
 ├── index.html          # GitHub Pages entry point (kept at repository root)
-├── assets/styles.css   # Static styles
-├── data/items.json     # Data-driven item catalogue
-├── src/                # Browser game and question engine
+├── assets/             # Game and catalog editor styles
+├── catalog.html        # Spreadsheet-style catalog editor
+├── data/items.json     # Property definitions and item catalogue
+├── src/                # Browser game, catalog storage, editor, and engine
 └── test/               # Node.js unit tests
 ```
 
 ### 1. Curate and validate the data
 
-- Store items in `data/items.json`. Each item has a stable unique `id`, `name`, `plural`, `emoji`, `category`, optional positive measurements in a `props` object using canonical units (`mass_kg`, `length_m`, `volume_l`), a `length_kind` (`length`, `height`, `diameter`, or `width`), a short note, and a source URL for every populated property.
+- `data/items.json` contains both a `properties` registry and an `items` array. Each item has stable identifying/display fields plus optional positive numeric values in `props`; `sources` stores the URL for each populated property. An item does not need every variable.
+- Each property definition declares its stable `id`, label, consistent unit, and question template. The engine loops through the registry, so a new column does not require a generator-code change. Optional `matchField`/`matchValues` metadata can restrict comparisons to items with matching measurement kinds. Templates support `{aName}`, `{aPlural}`, `{bName}`, `{bPlural}`, `{unit}`, `{aUnit}`, and `{bUnit}`; the built-in length definition also selects a template by `length_kind`.
+- Measurements must be positive, ratio-scale quantities with consistent units for a given property. Temperature in Celsius, dates, ordinal values, and mixed units are not meaningful for the ratio-based score. Keep a source URL beside each value; the editor does not automatically search or verify sources.
 - Keep a source URL with each measured property (or an equivalently clear per-property source record). A source must support the quantity and definition used, not just describe the item generally.
 - Keep at least 60 items across everyday objects and food, animals, vehicles, landmarks, and space. Expand categories with well-sourced examples, and verify current approximate values before treating them as approved data.
 - Prefer primary institutional references for facts. Use Wikidata to discover candidates and references, not as automatic verification. Normalize values once to the units above, preserve measurement meaning (for example, height versus diameter), and record ambiguity in the note.
@@ -35,7 +38,7 @@ The prototype currently includes 60 items across everyday objects, food, animals
 
 ### 2. Build a deterministic question engine
 
-- Put the generic generator in `src/questions.js`; adding an item should require editing only `data/items.json`.
+- Put the generic generator in `src/questions.js`; adding items and variable definitions is data work, not a generator-code change.
 - Select a property present on both items and use only matching properties. Choose a smaller item A and larger item B so `B / A` is between 3 and 10,000,000, inclusive.
 - Generate property-specific wording. Do not describe a diameter as a height or imply that unlike dimensions are directly comparable.
 - Filter same-category pairs with ratios under 3 and trivial, nearly round answers. Define and test the exact threshold rather than relying on subjective wording.
@@ -55,7 +58,9 @@ The prototype currently includes 60 items across everyday objects, food, animals
 - Verify that each generated question has valid data, matching properties, and correctly worded dimensions. Manually check keyboard operation, focus, contrast, and the complete game flow on mobile and desktop.
 - Document local run and test commands once the app structure is in place. Keep the site static; GitHub Pages is a suitable first deployment, using branch publishing for a site with no build step or a Pages Actions workflow if a build is introduced.
 
-Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies). Keep `index.html` at the root because GitHub Pages is configured to publish the branch root.
+Run the prototype locally with `python3 -m http.server 8000` from the repository root, then open `http://localhost:8000`. Open `http://localhost:8000/catalog.html` to manage items and variables in a spreadsheet-like table. Run the generator tests with `npm test` (Node.js 18 or newer; there are no installed runtime or test dependencies). Keep `index.html` at the root because GitHub Pages is configured to publish the branch root.
+
+The editor validates and saves catalog changes in browser storage, shared by the editor and game on that device. Use **Export catalog JSON** to download the full catalog; replace `data/items.json` with that file and commit/deploy the change to publish the new content to all players. Import accepts the same complete JSON format. The browser-only editor has no shared database or automatic source lookup.
 
 ## Research notes and references
 

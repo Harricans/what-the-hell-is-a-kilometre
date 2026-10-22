@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10131a">
+    <title>Catalog editor · What the Hell Is a Kilometre?</title>
+    <link rel="stylesheet" href="./assets/styles.css">
+    <link rel="stylesheet" href="./assets/catalog.css">
+    <script type="module" src="./src/catalog-editor.js"></script>
+  </head>
+  <body>
+    <main class="app catalog-app">
+      <header class="site-header">
+        <p class="eyebrow">Game data workshop</p>
+        <h1>Catalog editor</h1>
+        <p class="intro">Add items and variables, enter measurements when you have them, and keep a source link beside every value.</p>
+      </header>
+
+      <section class="panel editor-panel" aria-labelledby="catalog-heading">
+        <div class="editor-heading">
+          <div>
+            <h2 id="catalog-heading">Items and measurements</h2>
+            <p class="muted">Blank cells are fine. Each numeric measurement needs its own source URL before it can be saved for gameplay.</p>
+          </div>
+          <a class="button back-link" href="./index.html">Back to game</a>
+        </div>
+        <div class="toolbar" aria-label="Catalog actions">
+          <button id="add-item" class="button button-primary" type="button">Add item</button>
+          <button id="save-catalog" class="button" type="button">Save on this device</button>
+          <button id="export-catalog" class="button" type="button">Export catalog JSON</button>
+          <button id="import-catalog" class="button" type="button">Import catalog JSON</button>
+          <button id="restore-catalog" class="button" type="button">Restore repository version</button>
+          <input id="import-file" class="visually-hidden" type="file" accept="application/json,.json">
+        </div>
+        <p id="editor-status" class="status-message" role="status" aria-live="polite"></p>
+        <div class="table-scroll" tabindex="0" aria-label="Scrollable catalog table">
+          <table id="catalog-table">
+            <caption class="visually-hidden">Editable item records, measurements, and measurement source URLs.</caption>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel property-panel" aria-labelledby="property-heading">
+        <h2 id="property-heading">Add a variable / column</h2>
+        <p class="muted">A variable should be a positive, ratio-scale numeric quantity in one consistent unit (not a temperature or date). Items can leave it blank. Templates support {aName}, {aPlural}, {bName}, {bPlural}, and {unit}.</p>
+        <form id="property-form" class="property-form">
+          <label>Column ID
+            <input name="id" required pattern="[a-z][a-z0-9_]*" placeholder="e.g. battery_capacity">
+          </label>
+          <label>Label
+            <input name="label" required placeholder="e.g. Battery capacity">
+          </label>
+          <label>Unit
+            <input name="unit" required placeholder="e.g. Wh">
+          </label>
+          <label class="template-field">Question template
+            <input name="questionTemplate" required value="How many {aPlural} equal one {bName} by this measure?">
+          </label>
+          <button class="button button-primary" type="submit">Add column</button>
+        </form>
+      </section>
+
+      <section class="panel publish-panel" aria-labelledby="publish-heading">
+        <h2 id="publish-heading">Local edits vs. published game</h2>
+        <p>Saving stores this catalog only in this browser. To share it with every player, export the JSON and replace <code>data/items.json</code> in the repository, then commit and deploy the updated site. No account, server, or external API is used by this editor.</p>
+      </section>
+    </main>
+  </body>
+</html>
